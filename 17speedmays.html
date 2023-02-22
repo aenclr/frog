@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Pixel Frog Chases Strawberry</title>
+    <style>
+      #frog {
+        position: relative;
+        height: 50px;
+        width: 50px;
+        background-image: url('https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExNzE5YmE0NWQ5NzNkZDU5ODExNDEyZGM2YjUwZmJkNzZiYjRlMjc5OCZjdD1z/Ke2X2JvXLIrIycWppL/giphy.gif');
+        background-size: contain;
+      }
+      #strawberry {
+        position: absolute;
+        height: 30px;
+        width: 30px;
+        background-image: url('https://thumbs.dreamstime.com/b/strawberry-pixel-art-bit-red-berry-pixelated-231715515.jpg');
+        background-size: contain;
+        cursor: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="frog"></div>
+    <div id="strawberry"></div>
+    <script>
+      const frog = document.querySelector('#frog');
+      const strawberry = document.querySelector('#strawberry');
+
+      let isMoving = false;
+      let moveInterval;
+      let isPaused = false;
+
+      function moveFrog() {
+        const x = parseInt(strawberry.style.left);
+        const y = parseInt(strawberry.style.top);
+        const frogX = parseInt(frog.style.left) || 0;
+        const frogY = parseInt(frog.style.top) || 0;
+
+        const dx = x - frogX;
+        const dy = y - frogY;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        const speed = isPaused ? 0 : 17;
+
+        const angle = Math.atan2(dy, dx);
+        const vx = speed * Math.cos(angle);
+        const vy = speed * Math.sin(angle);
+
+        const newFrogX = frogX + vx;
+        const newFrogY = frogY + vy;
+
+        frog.style.left = newFrogX + 'px';
+        frog.style.top = newFrogY + 'px';
+
+        // Flip frog image horizontally if cursor is to the right of the frog
+  if (x > frogX) {
+    frog.style.transform = 'scaleX(-1)';
+  } else {
+    frog.style.transform = 'scaleX(1)';
+  }
+
+  resetFrogImage(); // Reset the frog image every time the frog starts moving again
+}
+
+function resetFrogImage() {
+  frog.style.backgroundPosition = '0 0';
+}
+
+function pauseFrog() {
+  isPaused = true;
+  setTimeout(() => {
+    isPaused = false;
+  }, 1111);
+}
+      document.addEventListener('mousemove', (e) => {
+        strawberry.style.left = e.clientX + 'px';
+        strawberry.style.top = e.clientY + 'px';
+
+        if (!isMoving) {
+          isMoving = true;
+          moveInterval = setInterval(() => {
+            moveFrog();
+            if (!isPaused) {
+              pauseFrog();
+            }
+          }, 50);
+        }
+      });
+    </script>
+  </body>
+</html>
